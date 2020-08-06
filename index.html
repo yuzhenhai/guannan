@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>底部导航</title>
+    <!-- <link rel="stylesheet" type="text/css" href="./css/api.css"/> -->
+    <link rel="stylesheet" type="text/css" href="./css/aui/aui.css"/>
+
+    <style>
+        .aui-bar-nav{
+          background-color: #EA0000;
+        }
+        .yuzh_index{
+          padding-top: 30px;
+          color: '#EA0000',inherit;
+          display: none;
+        }
+        .active{display: block;}
+    </style>
+</head>
+<body>
+<div id="ceshi">
+  <header class="aui-bar aui-bar-nav yuzh_index" v-for="(vo,index) in list" v-bind:class="{'active':yuzh_index == index}">
+    {{ vo.title }}
+  </header>
+  <footer class="aui-bar aui-bar-tab" id="footer">
+    <div class="aui-bar-tab-item " v-for="(vo,index) in list" v-on:click="dianji(index)" v-bind:class="{'aui-active':index == 0}">
+        <span class="aui-iconfont aui-icon-home" v-if="index == 0"></span>
+        <span class="aui-iconfont aui-icon-comment" v-if="index == 1"></span>
+        <span class="aui-iconfont aui-icon-star" v-if="index == 2"></span>
+        <span class="aui-iconfont aui-icon-like" v-if="index == 3"></span>
+        <span class="aui-iconfont aui-icon-my" v-if="index == 4"></span>
+        <p>{{ vo.title }}</p>
+    </div>
+
+
+  </footer>
+</div>
+</body>
+</html>
+<script type="text/javascript" src="script/api.js"></script>
+<script type="text/javascript" src="script/vue.js"></script>
+<script type="text/javascript">
+    apiready = function () {
+
+     var headerlist = $api.domAll('header');
+     for (var i = 0; i < headerlist.length; i++) {
+       $api.fixStatusBar(headerlist[i]);
+
+     }
+
+     api.setStatusBarStyle({
+         style: 'light',
+         color: '#EA0000'
+     });
+     yuzh.init();
+    }
+
+    var yuzh = new Vue({
+      el: '#ceshi',
+      data: {
+        yuzh_index:0,
+        list:[
+           { 'title':'首页' },
+           { 'title':'资讯' },
+           { 'title':'服务' },
+           { 'title':'生活' },
+           { 'title':'我的' }
+        ]
+      },
+      methods:{
+        init:function() {
+          var headerH = $api.dom('header').offsetHeight;
+          var footerH = $api.dom('footer').offsetHeight;
+          var frameH = api.winHeight - headerH -footerH;
+
+          api.openFrameGroup ({
+              name: 'group1',
+              background: '#fff',
+              scrollEnabled: false,
+              rect: {
+                   x: 0,
+                   y: headerH,
+                   w: 'auto',
+                   h: frameH
+              },
+              index:0,
+              frames: [{
+                  name: 'home',
+                  url: 'html/home.html',
+                  bgColor: '#fff',
+                  bounces:false
+              },{
+                  name: 'shizheng',
+                  url: './html/shizheng.html',
+                  bgColor: '#fff',
+                  bounces:false
+              },{
+                  name: 'categroy',
+                  url: './html/categroy.html',
+                  bgColor: '#fff',
+                  bounces:false
+              },{
+                  name: 'wenming',
+                  url: './html/wenming.html',
+                  bgColor: '#fff',
+                  bounces:false
+              },{
+                  name: 'user',
+                  url: './html/user.html',
+                  bgColor: '#fff',
+                  bounces:false
+              }]
+          }, function(ret, err){
+
+
+              // if( ret ){
+              //      alert( JSON.stringify( ret ) );
+              // }else{
+              //      alert( JSON.stringify( err ) );
+              // }
+          });
+        },
+        dianji:function(index){
+
+          if(yuzh.yuzh_index == index){
+            return false;
+          }
+          yuzh.yuzh_index = index;
+
+          eFootLis = $api.domAll('#footer div');
+          // $api.removeCls(eFootLis[i], 'active');
+          for (var i = 0; i < eFootLis.length; i++) {
+            $api.removeCls(eFootLis[i], 'aui-active');
+          }
+          $api.addCls( eFootLis[index], 'aui-active');
+          api.setFrameGroupIndex({
+              name: 'group1',
+              index: index,
+              scroll: true
+          });
+
+        }
+      }
+    });
+</script>

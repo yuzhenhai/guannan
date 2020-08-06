@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>首页</title>
+    <!-- <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/style.css"/> -->
+    <link rel="stylesheet" type="text/css" href="../css/aui/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/swiper.min.css"/>
+    <script type="text/javascript" src="../script/vue.js"></script>
+
+    <style>
+    /*html, body {
+        position: relative;
+        height: 100%;
+    }
+    body {
+        background: #eee;
+        font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        color:#000;
+        margin: 0;
+        padding: 0;
+    }*/
+    .swiper-container {
+        width: 100%;
+        height: 100%;
+
+    }
+    .swiper-slide {
+        text-align: center;
+        font-size: 18px;
+        background: #fff;
+
+        /* Center slide text vertically */
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+    }
+    .aui-list .aui-list-item-media {
+      width: 8.5rem;
+    }
+    </style>
+</head>
+<body>
+    <div id="yuzh_home" class="aui-content">
+      <div class="swiper-container">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide" v-for="vo in lunbo">
+              <img v-bind:src="vo.image">
+            </div>
+
+        </div>
+        <!-- Add Arrows -->
+        <!-- <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div> -->
+        <!-- 如果需要分页器 -->
+        <div class="swiper-pagination"></div>
+
+      </div>
+      <div class="aui-content aui-margin-b-15">
+        <ul class="aui-list aui-media-list">
+            <li class="aui-list-header">
+                图文列表
+            </li>
+
+            <li class="aui-list-item" v-for="vo in xinwen">
+                <div class="aui-media-list-item-inner" v-on:click="info(vo.id)">
+                    <div class="aui-list-item-media">
+                        <img  v-bind:src="vo.image">
+                    </div>
+                    <div class="aui-list-item-inner">
+                        <div class="aui-list-item-text">
+                            <div class="aui-list-item-title">{{ vo.name }}</div>
+
+                        </div>
+                        <div class="aui-list-item-text">
+                          <div class="aui-info-item">
+                              <div class="aui-list-item-left">{{ vo.fenlei }}</div>
+                            </div>
+                          <div class="aui-info-item">{{ vo.time }}</div>
+                        </div>
+                    </div>
+                </div>
+
+            </li>
+        </ul>
+    </div>
+    </div>
+</body>
+
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/vue.js"></script>
+<script type="text/javascript" src="../script/my.js"></script>
+<script type="text/javascript" src="../script/swiper.min.js"></script>
+<script type="text/javascript">
+    apiready = function() {
+
+      vm.init();
+      vm.xinwens();
+    }
+    var vm = new Vue({
+      el: '#yuzh_home',
+      data:{
+        lunbo:[],
+        xinwen:[],
+      },
+      methods:{
+        init:function() {
+          api.ajax({
+              url: index_url+'Index/lunbo',
+              method: 'post',
+          },function(ret, err){
+            if (ret) {
+              // this.$set(this.someObject,'lunbo',ret.data)
+              vm.lunbo = ret.data.lunbo;
+              setTimeout(function(){
+                  var swiper = new Swiper('.swiper-container', {
+                     pagination: '.swiper-pagination',
+                     paginationClickable: true,
+                     centeredSlides: true,
+                     autoplay: 3000,
+                     autoplayDisableOnInteraction: false
+                 });
+              },100);
+
+            } else {
+                // alert( JSON.stringify( err ) );
+            }
+          });
+
+
+        },
+        xinwens:function() {
+          api.ajax({
+              url: index_url+'Index/xinwen',
+              method: 'post',
+          },function(ret, err){
+            if (ret) {
+              // this.$set(this.someObject,'lunbo',ret.data)
+              vm.xinwen = ret.data.xinwen;
+              // alert( JSON.stringify( ret.data.xinwen ) )
+            } else {
+                // alert( JSON.stringify( err ) );
+            }
+          });
+        },
+        info:function(infoid) {
+
+          api.openWin({
+              name: 'infos',
+              url: 'widget://html/info.html',
+              pageParam: {
+                  id: infoid
+              }
+          });
+        },
+      }
+    });
+
+
+</script>
+</html>
